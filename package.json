@@ -1,0 +1,26 @@
+{
+  "name": "hoopmate",
+  "version": "1.0.0",
+  "description": "HOOPMATE - Pengelola Pertandingan Basket 3x3",
+  "type": "module",
+  "scripts": {
+    "dev:css": "npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch",
+    "build:css": "npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --minify",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "hoopmate",
+    "basketball",
+    "3x3",
+    "scoreboard",
+    "pwa"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "tailwindcss": "^4.3.5",
+    "vitest": "^3.2.7"
+  }
+}
