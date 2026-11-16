@@ -275,7 +275,70 @@
               </div>
             </section>
 
-            <!-- Card 3 masuk di bawah ini -->
+            <!-- Card 3: Daftar Pemain -->
+            <section
+              aria-label="Daftar Pemain"
+              class="rounded-2xl border border-court-border bg-court-card p-5"
+            >
+              <div class="mb-3 flex items-center justify-between">
+                <h3
+                  class="font-display text-sm font-bold uppercase tracking-wider text-court-muted"
+                >
+                  Daftar Pemain
+                </h3>
+                <span
+                  id="player-count-badge"
+                  class="rounded-full bg-court-box px-2.5 py-0.5 font-mono text-xs text-court-muted"
+                >
+                  0 Pemain
+                </span>
+              </div>
+
+              <!-- Form tambah pemain -->
+              <form id="player-form" class="mb-4 flex gap-2">
+                <input
+                  id="player-input"
+                  type="text"
+                  placeholder="Nama pemain..."
+                  required
+                  class="flex-1 rounded-xl border border-court-border bg-court-box px-3.5 py-2 text-sm text-court-cream placeholder-court-muted focus:border-court-orange focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  class="rounded-xl bg-court-orange px-4 py-2 text-sm font-bold text-court-bg transition hover:opacity-90"
+                >
+                  Add
+                </button>
+              </form>
+
+              <!-- List pemain (contoh tampilan item) -->
+              <ul
+                id="player-list"
+                class="max-h-72 space-y-2 overflow-y-auto pr-1"
+              >
+                <li
+                  class="flex items-center justify-between rounded-xl border border-court-border bg-court-box px-3.5 py-2.5"
+                >
+                  <span class="text-sm font-medium text-court-cream"
+                    >Didit</span
+                  >
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      class="rounded-lg border border-court-border px-2.5 py-1 text-xs text-court-muted hover:border-court-cream hover:text-court-cream"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-lg border border-red-500/40 px-2.5 py-1 text-xs text-red-400 hover:bg-red-500/10"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </section>
           </div>
 
           <!-- Kolom kanan: Tim/Jadwal & Klasemen -->
