@@ -173,7 +173,7 @@ function renderSchedule() {
   if (state.matches.length === 0) {
     const empty = document.createElement('li');
     empty.className = 'rounded-xl border border-dashed border-court-border bg-court-box px-3.5 py-3 text-center text-xs text-court-muted';
-    empty.textContent = 'Belum ada jadwal. Klik "Buat Jadwal" setelah acak tim.';
+    empty.textContent = 'Belum ada jadwal. Klik "Susun Jadwal" setelah acak tim.';
     scheduleListEl.appendChild(empty);
     return;
   }
