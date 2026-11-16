@@ -50,28 +50,48 @@ export function buildTeams(players, teamSize = 3) {
   return teams;
 }
 
-// Buat jadwal pertandingan agar setiap tim saling bertemu
+// Buat jadwal pertandingan acak & merata (Circle Method) agar tidak main berturut-turut
 export function generateMatches(teams) {
   if (teams.length < 2) return [];
 
+  // Acak urutan tim dulu supaya jadwal tidak selalu mulai dari Tim A
+  const pool = shuffleArray(teams);
+  if (pool.length % 2 !== 0) pool.push(null); // Tambah slot istirahat jika jumlah tim ganjil
+
+  const n = pool.length;
+  const rounds = n - 1;
   const matches = [];
   let matchNumber = 1;
 
-  for (let i = 0; i < teams.length; i++) {
-    for (let j = i + 1; j < teams.length; j++) {
+  for (let r = 0; r < rounds; r++) {
+    const roundPairs = [];
+
+    for (let i = 0; i < n / 2; i++) {
+      const teamA = pool[i];
+      const teamB = pool[n - 1 - i];
+      if (!teamA || !teamB) continue;
+
+      roundPairs.push([teamA, teamB]);
+    }
+
+    // Acak urutan laga dalam 1 ronde
+    shuffleArray(roundPairs).forEach(([teamA, teamB]) => {
       matches.push({
         id: crypto.randomUUID(),
-        matchNumber,
-        teamAId: teams[i].id,
-        teamBId: teams[j].id,
-        teamAName: teams[i].name,
-        teamBName: teams[j].name,
+        matchNumber: matchNumber++,
+        teamAId: teamA.id,
+        teamBId: teamB.id,
+        teamAName: teamA.name,
+        teamBName: teamB.name,
         scoreA: 0,
         scoreB: 0,
         done: false,
       });
-      matchNumber++;
-    }
+    });
+
+    // Putar posisi tim (index 0 tetap, sisanya geser ke kanan)
+    const last = pool.pop();
+    pool.splice(1, 0, last);
   }
 
   return matches;

@@ -35,8 +35,9 @@ describe('Pembagian Tim & Jadwal (teams.js)', () => {
 
     const matches = generateMatches(teams);
     expect(matches).toHaveLength(1);
-    expect(matches[0].teamAName).toBe('Tim A');
-    expect(matches[0].teamBName).toBe('Tim B');
+    expect([matches[0].teamAName, matches[0].teamBName]).toEqual(
+      expect.arrayContaining(['Tim A', 'Tim B'])
+    );
   });
 
   it('menyebar pemain sisa ke tim lain secara acak sebagai cadangan (10 pemain = 3 tim)', () => {
@@ -88,6 +89,25 @@ describe('Pembagian Tim & Jadwal (teams.js)', () => {
       { id: '3', name: 'Tim C', members: [] },
     ];
     expect(generateMatches(teams)).toHaveLength(3);
+  });
+
+  it('menghasilkan 6 pertandingan untuk 4 tim tanpa ada tim main 3x berturut-turut', () => {
+    const teams = ['A', 'B', 'C', 'D'].map((l, i) => ({
+      id: String(i),
+      name: `Tim ${l}`,
+      members: [],
+    }));
+    const matches = generateMatches(teams);
+    expect(matches).toHaveLength(6);
+
+    // Pastikan tidak ada tim yang muncul di 3 match berurutan
+    for (let i = 0; i <= matches.length - 3; i++) {
+      const m1 = [matches[i].teamAId, matches[i].teamBId];
+      const m2 = [matches[i + 1].teamAId, matches[i + 1].teamBId];
+      const m3 = [matches[i + 2].teamAId, matches[i + 2].teamBId];
+      const threeInARow = m1.filter((id) => m2.includes(id) && m3.includes(id));
+      expect(threeInARow).toHaveLength(0);
+    }
   });
 });
 
