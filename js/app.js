@@ -12,6 +12,7 @@ let lastAnnouncedSecond = null;
 // Elemen DOM: Header & Sesi
 const btnNewSession = document.getElementById('btn-new-session');
 const sessionDateEl = document.getElementById('session-date');
+const sessionTimeEl = document.getElementById('session-time');
 const sessionTitleEl = document.getElementById('session-title');
 const statPlayersEl = document.getElementById('stat-players');
 const statTeamsEl = document.getElementById('stat-teams');
@@ -50,16 +51,32 @@ function commit() {
   render();
 }
 
-// Render Card 1: Info Sesi
-function renderSession() {
-  const today = new Date().toLocaleDateString('id-ID', {
+// Update hari, tanggal, dan jam WITA secara dinamis
+function updateSessionClock() {
+  const now = new Date();
+  const datePart = now.toLocaleDateString('id-ID', {
     weekday: 'long',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
+    timeZone: 'Asia/Makassar',
   });
+  const timePart = now
+    .toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Makassar',
+    })
+    .replace('.', ':');
 
-  sessionDateEl.textContent = today;
+  sessionDateEl.textContent = datePart;
+  sessionTimeEl.textContent = `${timePart} WITA`;
+}
+
+// Render Card 1: Info Sesi
+function renderSession() {
+  updateSessionClock();
   sessionTitleEl.textContent = state.sessionName;
   statPlayersEl.textContent = state.players.length;
   statTeamsEl.textContent = state.teams.length;
@@ -421,6 +438,7 @@ btnMatchFinish.addEventListener('click', finishCurrentMatch);
 
 // Inisialisasi aplikasi saat halaman dibuka
 function init() {
+  setInterval(updateSessionClock, 1000);
   if (state.timer.isRunning && state.timer.endTime) {
     const remaining = Math.max(0, Math.ceil((state.timer.endTime - Date.now()) / 1000));
     if (remaining > 0) {

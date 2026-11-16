@@ -4,7 +4,7 @@ const STORAGE_KEY = "hoopmate_state_v1";
 // Buat struktur state awal
 export function createInitialState() {
   return {
-    sessionName: "Sunday 3x3 Run",
+    sessionName: "Pickup 3x3 Run",
     players: [], // [{ id, name }]
     teams: [], // [{ id, name, members }]
     matches: [], // [{ id, teamAId, teamBId, scoreA, scoreB, done }]
