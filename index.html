@@ -343,7 +343,98 @@
 
           <!-- Kolom kanan: Tim/Jadwal & Klasemen -->
           <div class="space-y-5 lg:col-span-7">
-            <!-- Card 4 & 5 masuk di sini -->
+            <!-- Card 4: Tim 3v3 & Jadwal Pertandingan -->
+            <section
+              aria-label="Tim 3v3 dan Jadwal"
+              class="rounded-2xl border border-court-border bg-court-card p-5"
+            >
+              <!-- Header & tombol aksi -->
+              <div
+                class="mb-4 flex flex-wrap items-center justify-between gap-2"
+              >
+                <h3
+                  class="font-display text-sm font-bold uppercase tracking-wider text-court-muted"
+                >
+                  Tim 3v3 &amp; Jadwal
+                </h3>
+                <div class="flex gap-2">
+                  <button
+                    id="btn-shuffle-teams"
+                    type="button"
+                    class="rounded-xl border border-court-border bg-court-box px-3 py-1.5 text-xs font-medium text-court-cream transition hover:border-court-orange"
+                  >
+                    Acak Tim 3v3
+                  </button>
+                  <button
+                    id="btn-generate-schedule"
+                    type="button"
+                    class="rounded-xl bg-court-orange px-3 py-1.5 text-xs font-bold text-court-bg transition hover:opacity-90"
+                  >
+                    Buat Jadwal
+                  </button>
+                </div>
+              </div>
+
+              <!-- Daftar Tim -->
+              <div
+                id="teams-list"
+                class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2"
+              >
+                <div
+                  class="rounded-xl border border-court-border bg-court-box p-3"
+                >
+                  <p
+                    class="text-xs font-bold uppercase tracking-wider text-court-orange"
+                  >
+                    Tim A
+                  </p>
+                  <p class="mt-1 text-xs text-court-muted">
+                    Belum ada pemain. Tambah minimal 6 pemain lalu acak.
+                  </p>
+                </div>
+                <div
+                  class="rounded-xl border border-court-border bg-court-box p-3"
+                >
+                  <p
+                    class="text-xs font-bold uppercase tracking-wider text-court-lime"
+                  >
+                    Tim B
+                  </p>
+                  <p class="mt-1 text-xs text-court-muted">
+                    Menunggu pembagian tim.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Daftar Jadwal Pertandingan -->
+              <div>
+                <p
+                  class="mb-2 text-xs font-medium uppercase tracking-wider text-court-muted"
+                >
+                  Jadwal Pertandingan
+                </p>
+                <ul id="schedule-list" class="space-y-2">
+                  <li
+                    class="flex items-center justify-between rounded-xl border border-court-border bg-court-box px-3.5 py-2.5 text-sm"
+                  >
+                    <span class="text-court-muted"
+                      >Match #1:
+                      <strong class="text-court-cream"
+                        >Tim A vs Tim B</strong
+                      ></span
+                    >
+                    <button
+                      type="button"
+                      class="rounded-lg border border-court-orange px-2.5 py-1 text-xs font-bold text-court-orange transition hover:bg-court-orange hover:text-court-bg"
+                    >
+                      Mainkan
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            
           </div>
         </div>
       </main>
