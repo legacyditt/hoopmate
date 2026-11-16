@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
+/* Tema warna & font sistem */
 @theme {
-  --color-court-black: #101820;
-  --color-court-surface: #202C38;
-  --color-court-orange: #F47B35;
-  --color-court-ivory: #F4F5F7;
-  --color-court-muted: #B7C0C8;
+  --color-court-bg: #101820;
+  --color-court-card: #192630;
+  --color-court-box: #111D25;
+  --color-court-border: #2B3A44;
+  --color-court-orange: #FF7138;
+  --color-court-cream: #F4F1E9;
+  --color-court-muted: #9BA8AE;
+  --color-court-lime: #B7EF72;
+
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", monospace;
 }
