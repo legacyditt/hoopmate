@@ -2,10 +2,12 @@ import { createInitialState, loadState, saveState } from './state.js';
 import { addPlayer, editPlayer, deletePlayer } from './player.js';
 import { buildTeams, generateMatches, assignLatePlayer } from './teams.js';
 import { addPoints, undoLastScore, formatTime } from './scoreboard.js';
+import { unlockAudio, announceRemainingTime, stopCountdownAudio } from './sound.js';
 
 // State utama aplikasi
 let state = loadState();
 let timerInterval = null;
+let lastAnnouncedSecond = null;
 
 // Elemen DOM: Header & Sesi
 const btnNewSession = document.getElementById('btn-new-session');
@@ -216,6 +218,11 @@ function startTimerLoop() {
     const remaining = Math.max(0, Math.ceil((state.timer.endTime - Date.now()) / 1000));
     state.timer.remainingSeconds = remaining;
 
+    if (remaining !== lastAnnouncedSecond) {
+      lastAnnouncedSecond = remaining;
+      announceRemainingTime(remaining);
+    }
+
     if (remaining <= 0) {
       state.timer.isRunning = false;
       state.timer.endTime = null;
@@ -233,6 +240,7 @@ function startTimerLoop() {
 btnNewSession.addEventListener('click', () => {
   if (!confirm('Reset semua data dan mulai sesi baru?')) return;
   stopTimerLoop();
+  stopCountdownAudio();
   state = createInitialState();
   commit();
 });
@@ -341,9 +349,11 @@ timerMinutesInput.addEventListener('change', () => {
 // Start Timer
 btnTimerStart.addEventListener('click', () => {
   if (state.timer.isRunning) return;
+  unlockAudio();
   if (state.timer.remainingSeconds <= 0) {
     state.timer.remainingSeconds = state.timer.durationMinutes * 60;
   }
+  lastAnnouncedSecond = state.timer.remainingSeconds;
   state.timer.isRunning = true;
   state.timer.endTime = Date.now() + state.timer.remainingSeconds * 1000;
   startTimerLoop();
@@ -357,12 +367,14 @@ btnTimerPause.addEventListener('click', () => {
   state.timer.isRunning = false;
   state.timer.endTime = null;
   stopTimerLoop();
+  stopCountdownAudio();
   commit();
 });
 
 // Reset Timer
 btnTimerReset.addEventListener('click', () => {
   stopTimerLoop();
+  stopCountdownAudio();
   state.timer.isRunning = false;
   state.timer.endTime = null;
   state.timer.remainingSeconds = state.timer.durationMinutes * 60;
@@ -379,6 +391,7 @@ btnMatchFinish.addEventListener('click', () => {
   }
 
   stopTimerLoop();
+  stopCountdownAudio();
   state.activeMatchId = null;
   state.scoreboard = {
     teamAName: 'Tim A',
