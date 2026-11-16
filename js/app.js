@@ -212,6 +212,25 @@ function stopTimerLoop() {
   }
 }
 
+// Selesaikan match aktif lalu lanjut ke match berikutnya
+function finishCurrentMatch() {
+  const activeMatch = state.matches.find((m) => m.id === state.activeMatchId);
+  if (activeMatch) {
+    activeMatch.scoreA = state.scoreboard.scoreA;
+    activeMatch.scoreB = state.scoreboard.scoreB;
+    activeMatch.done = true;
+  }
+
+  stopTimerLoop();
+  stopCountdownAudio();
+  const nextMatch = state.matches.find((m) => !m.done) || null;
+  loadMatchToScoreboard(nextMatch);
+  state.timer.isRunning = false;
+  state.timer.endTime = null;
+  state.timer.remainingSeconds = state.timer.durationMinutes * 60;
+  commit();
+}
+
 function startTimerLoop() {
   stopTimerLoop();
   timerInterval = setInterval(() => {
@@ -224,9 +243,8 @@ function startTimerLoop() {
     }
 
     if (remaining <= 0) {
-      state.timer.isRunning = false;
-      state.timer.endTime = null;
-      stopTimerLoop();
+      finishCurrentMatch();
+      return;
     }
 
     saveState(state);
@@ -277,6 +295,30 @@ playerListEl.addEventListener('click', (e) => {
   }
 });
 
+// Muat data match ke papan skor (atau reset ke default jika null)
+function loadMatchToScoreboard(match) {
+  if (match) {
+    state.activeMatchId = match.id;
+    state.scoreboard = {
+      teamAName: match.teamAName,
+      teamBName: match.teamBName,
+      scoreA: match.scoreA,
+      scoreB: match.scoreB,
+      history: [],
+    };
+    return;
+  }
+
+  state.activeMatchId = null;
+  state.scoreboard = {
+    teamAName: 'Tim A',
+    teamBName: 'Tim B',
+    scoreA: 0,
+    scoreB: 0,
+    history: [],
+  };
+}
+
 // Acak Tim 3v3
 btnShuffleTeams.addEventListener('click', () => {
   if (state.players.length < 2) {
@@ -285,18 +327,18 @@ btnShuffleTeams.addEventListener('click', () => {
   }
   state.teams = buildTeams(state.players, 3);
   state.matches = [];
-  state.activeMatchId = null;
+  loadMatchToScoreboard(null);
   commit();
 });
 
-// Buat Jadwal Pertandingan
+// Buat Jadwal Pertandingan dan langsung muat Match #1 ke Papan Skor
 btnGenerateSchedule.addEventListener('click', () => {
   if (state.teams.length < 2) {
     alert('Acak tim terlebih dahulu sebelum membuat jadwal.');
     return;
   }
   state.matches = generateMatches(state.teams);
-  state.activeMatchId = null;
+  loadMatchToScoreboard(state.matches[0] || null);
   commit();
 });
 
@@ -308,14 +350,7 @@ scheduleListEl.addEventListener('click', (e) => {
   const match = state.matches.find((m) => m.id === btn.dataset.id);
   if (!match || match.done) return;
 
-  state.activeMatchId = match.id;
-  state.scoreboard = {
-    teamAName: match.teamAName,
-    teamBName: match.teamBName,
-    scoreA: match.scoreA,
-    scoreB: match.scoreB,
-    history: [],
-  };
+  loadMatchToScoreboard(match);
   commit();
 });
 
@@ -381,30 +416,8 @@ btnTimerReset.addEventListener('click', () => {
   commit();
 });
 
-// Selesai Match
-btnMatchFinish.addEventListener('click', () => {
-  const activeMatch = state.matches.find((m) => m.id === state.activeMatchId);
-  if (activeMatch) {
-    activeMatch.scoreA = state.scoreboard.scoreA;
-    activeMatch.scoreB = state.scoreboard.scoreB;
-    activeMatch.done = true;
-  }
-
-  stopTimerLoop();
-  stopCountdownAudio();
-  state.activeMatchId = null;
-  state.scoreboard = {
-    teamAName: 'Tim A',
-    teamBName: 'Tim B',
-    scoreA: 0,
-    scoreB: 0,
-    history: [],
-  };
-  state.timer.isRunning = false;
-  state.timer.endTime = null;
-  state.timer.remainingSeconds = state.timer.durationMinutes * 60;
-  commit();
-});
+// Selesai Match (manual jika selesai lebih awal sebelum waktu habis)
+btnMatchFinish.addEventListener('click', finishCurrentMatch);
 
 // Inisialisasi aplikasi saat halaman dibuka
 function init() {
