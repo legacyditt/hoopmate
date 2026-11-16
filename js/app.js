@@ -1,6 +1,6 @@
 import { createInitialState, loadState, saveState } from './state.js';
 import { addPlayer, editPlayer, deletePlayer } from './player.js';
-import { buildTeams, generateMatches } from './teams.js';
+import { buildTeams, generateMatches, assignLatePlayer } from './teams.js';
 import { addPoints, undoLastScore, formatTime } from './scoreboard.js';
 
 // State utama aplikasi
@@ -240,7 +240,11 @@ btnNewSession.addEventListener('click', () => {
 // Tambah Pemain
 playerForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  if (addPlayer(state.players, playerInput.value)) {
+  const rawName = playerInput.value;
+  if (addPlayer(state.players, rawName)) {
+    if (state.teams.length >= 2) {
+      assignLatePlayer(state.teams, state.matches, rawName);
+    }
     playerInput.value = '';
     commit();
   }

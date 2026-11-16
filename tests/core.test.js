@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { addPlayer, editPlayer, deletePlayer } from '../js/player.js';
-import { buildTeams, generateMatches } from '../js/teams.js';
+import { buildTeams, generateMatches, assignLatePlayer } from '../js/teams.js';
 import { addPoints, undoLastScore, formatTime } from '../js/scoreboard.js';
 
 describe('Manajemen Pemain (player.js)', () => {
@@ -37,6 +37,48 @@ describe('Pembagian Tim & Jadwal (teams.js)', () => {
     expect(matches).toHaveLength(1);
     expect(matches[0].teamAName).toBe('Tim A');
     expect(matches[0].teamBName).toBe('Tim B');
+  });
+
+  it('menyebar pemain sisa ke tim lain secara acak sebagai cadangan (10 pemain = 3 tim)', () => {
+    const players = Array.from({ length: 10 }, (_, i) => ({
+      id: String(i),
+      name: `P${i + 1}`,
+    }));
+
+    const teams = buildTeams(players, 3);
+    expect(teams).toHaveLength(3);
+
+    const sizes = teams.map((t) => t.members.length).sort();
+    expect(sizes).toEqual([3, 3, 4]);
+
+    const allMembers = teams.flatMap((t) => t.members);
+    expect(allMembers.filter((m) => m.endsWith('(Cadangan)'))).toHaveLength(1);
+  });
+
+  it('memasukkan pemain susulan sebagai cadangan lalu membentuk Tim D saat genap 3', () => {
+    const teams = [
+      { id: '1', name: 'Tim A', members: ['P1', 'P2', 'P3'] },
+      { id: '2', name: 'Tim B', members: ['P4', 'P5', 'P6', 'didit (Cadangan)'] },
+      { id: '3', name: 'Tim C', members: ['P7', 'P8', 'P9'] },
+    ];
+    const matches = generateMatches(teams); // 3 match awal
+
+    // Teman 1 datang -> masuk acak ke tim isi 3 (Tim A atau Tim C)
+    assignLatePlayer(teams, matches, 'Teman 1');
+    expect(teams).toHaveLength(3);
+    expect(teams[1].members).toHaveLength(4);
+    expect(teams.filter((t) => t.members.length === 4)).toHaveLength(2);
+
+    // Teman 2 datang -> didit + Teman 1 + Teman 2 gabung jadi Tim D + tambah 3 jadwal baru
+    assignLatePlayer(teams, matches, 'Teman 2');
+    expect(teams).toHaveLength(4);
+    expect(teams[3].name).toBe('Tim D');
+    expect(teams[3].members).toHaveLength(3);
+    expect(teams[3].members).toEqual(expect.arrayContaining(['didit', 'Teman 1', 'Teman 2']));
+    expect(teams[0].members).toHaveLength(3);
+    expect(teams[1].members).toHaveLength(3);
+    expect(teams[2].members).toHaveLength(3);
+    expect(matches).toHaveLength(6);
   });
 
   it('menghasilkan 3 pertandingan untuk 3 tim', () => {
